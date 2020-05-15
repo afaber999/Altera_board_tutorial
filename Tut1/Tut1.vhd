@@ -1,68 +1,62 @@
 -- Tutorial 1
 
-LIBRARY ieee;
-USE ieee.std_logic_1164.all;
-USE ieee.numeric_std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use  ieee.numeric_std.all;
                    
-ENTITY Tut1 is
-  PORT(
+entity Tut1 is
+  port(
     clk  :in  std_logic;
-    led1 :out std_logic_vector(11 DOWNTO 0)
+    led1 :out std_logic_vector(11 downto 0)
   );                                              
-END Tut1;
+end Tut1;
 
 
-
-ARCHITECTURE RTL OF Tut1 IS            
-
+architecture RTL of Tut1 IS            
   signal clk_1Hz     : std_logic := '0';
+begin                                                                  
 
-BEGIN                                                                  
-
-  -- Generate 1Hz clock
-  P1:PROCESS (clk)
+  -- Process to generate 1Hz clock, bases on 50 Mhz system clock
+  P1:process (clk)
 		variable counter_1Hz : integer range 0 TO 24999999 := 0;
-  BEGIN
-    IF rising_edge( clk ) THEN
-      IF counter_1Hz = 24999999 THEN
+  begin
+    if rising_edge( clk ) then
+      if counter_1Hz = 24999999 then
         clk_1Hz <= not clk_1Hz;
   		  counter_1Hz := 0;
-      ELSE
+      else
   		  counter_1Hz := counter_1Hz + 1;
-      END IF;
-    END IF;
+      end if;
+    end if;   
+  end process P1;
     
-  END PROCESS P1;
-  
-  
-  -- LED counter
-  P2 : PROCESS(clk_1Hz)                                              
+  -- LED output process
+  P2 : process(clk_1Hz)                                              
     variable led_counter : integer range 0 to 15 := 0;
-  BEGIN
-    IF rising_edge(clk_1Hz) THEN 
-     IF led_counter = 15 THEN
+  begin
+    if rising_edge(clk_1Hz) then 
+     if led_counter = 15 then
         led_counter := 0;
-  	  ELSE
+  	  else
         led_counter := led_counter + 1;
-     END IF;
-    END IF;
+     end if;
+    end if;
 
-    CASE led_counter IS
-      WHEN 0=>      led1 <="111111111110";
-      WHEN 1=>      led1 <="111111111100"; 
-      WHEN 2=>      led1 <="111111111000";
-      WHEN 3=>      led1 <="111111110000";
-      WHEN 4=>      led1 <="111111100000";
-      WHEN 5=>      led1 <="111111000000";
-      WHEN 6=>      led1 <="111110000000";
-      WHEN 7=>      led1 <="111100000000";
-      WHEN 8=>      led1 <="111000000000";
-      WHEN 9=>      led1 <="110000000000";
-      WHEN 10=>     led1 <="100000000000";
-      WHEN 11=>     led1 <="000000000000"; 
-      WHEN OTHERS=> led1 <="111111111111";             
-    END CASE;
-	 
-  END PROCESS P2; 
+    case led_counter is
+      when 0=>      led1 <="111111111110";
+      when 1=>      led1 <="111111111100"; 
+      when 2=>      led1 <="111111111000";
+      when 3=>      led1 <="111111110000";
+      when 4=>      led1 <="111111100000";
+      when 5=>      led1 <="111111000000";
+      when 6=>      led1 <="111110000000";
+      when 7=>      led1 <="111100000000";
+      when 8=>      led1 <="111000000000";
+      when 9=>      led1 <="110000000000";
+      when 10=>     led1 <="100000000000";
+      when 11=>     led1 <="000000000000"; 
+      when OTHERS=> led1 <="111111111111";             
+    end case;	 
+  end process P2; 
  
-END RTL;
+end RTL;
