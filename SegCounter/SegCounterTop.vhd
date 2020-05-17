@@ -16,28 +16,22 @@ architecture RTL of SegCounterTop is
    signal r_clk1Hz   : std_logic := '0';
    signal r_clk762Hz : std_logic := '0';
 
-   signal r_digit_0   : std_logic_vector(3 downto 0) := x"F";
-   signal r_digit_1   : std_logic_vector(3 downto 0) := x"A";
-   signal r_digit_2   : std_logic_vector(3 downto 0) := x"C";
-   signal r_digit_3   : std_logic_vector(3 downto 0) := x"E";
-   signal r_digit_4   : std_logic_vector(3 downto 0) := x"3";
-   signal r_digit_5   : std_logic_vector(3 downto 0) := x"2";
-   signal r_digit_6   : std_logic_vector(3 downto 0) := x"1";
-   signal r_digit_7   : std_logic_vector(3 downto 0) := x"0";
-	
+   signal r_acounter  : std_logic_vector(15 downto 0) := x"FACE";
+   signal r_bcounter  : std_logic_vector(15 downto 0) := x"BABE";
+   	
 begin
 
   -- An instance of T15_Mux with architecture rtl
   INST_SEGCOUNTER  : entity work.SegCounter(rtl) port map(
         i_clk     => r_clk762Hz,
-        i_digit_0 => r_digit_0,
-        i_digit_1 => r_digit_1,
-        i_digit_2 => r_digit_2,
-        i_digit_3 => r_digit_3,
-        i_digit_4 => r_digit_4,
-        i_digit_5 => r_digit_5,
-        i_digit_6 => r_digit_6,
-        i_digit_7 => r_digit_7,
+        i_digit_0 => r_acounter(15 downto 12),
+        i_digit_1 => r_acounter(11 downto  8),
+        i_digit_2 => r_acounter( 7 downto  4),
+        i_digit_3 => r_acounter( 3 downto  0),
+        i_digit_4 => r_bcounter(15 downto 12),
+        i_digit_5 => r_bcounter(11 downto  8),
+        i_digit_6 => r_bcounter( 7 downto  4),
+        i_digit_7 => r_bcounter( 3 downto  0),
      
         o_led7    => led7,
         o_led7s   => led7s 
@@ -74,17 +68,17 @@ begin
    P2b : process (r_clk1Hz)
    begin
       if rising_edge(r_clk1Hz) then
-         if r_digit_7 = x"F" then
-            r_digit_7 <= (others => '0');
-            if r_digit_6 = x"F" then
-            else
-              r_digit_6 <= std_logic_vector( unsigned(r_digit_6) + 1 );
-            end if;  
-          else
-            r_digit_7 <= std_logic_vector( unsigned(r_digit_7) + 1 );
-         end if;
+        if r_acounter = x"FFFF" then
+          r_acounter <= (others => '0');
+        else
+          r_acounter <= std_logic_vector( unsigned(r_acounter) + 1 );
+        end if;
+        if r_bcounter = x"0000" then
+          r_bcounter <= x"FFFF";
+        else
+          r_bcounter <= std_logic_vector( unsigned(r_bcounter) - 1 );
+        end if;      
       end if;
    end process P2b;
-
 	
 end RTL;
