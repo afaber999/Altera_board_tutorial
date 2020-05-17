@@ -4,7 +4,7 @@ JedecChain;
 	DefaultMfr(6E);
 
 	P ActionCode(Cfg)
-		Device PartName(EP4CE6E22) Path("C:/Users/nly96021/Google Drive/AlteraBoard/A-C4E6E10 board/VHDL-Examples/16-SMG_LED/") File("SegCounter.sof") MfrSpec(OpMask(1));
+		Device PartName(EP4CE6E22) Path("C:/vhdl/altera/Altera_board_tutorial/SegCounter/") File("SegCounter.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 

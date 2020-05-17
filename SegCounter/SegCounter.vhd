@@ -1,64 +1,101 @@
 
-library ieee; 
-use ieee.std_logic_1164.all; 
-use ieee.std_logic_unsigned.all; 
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-entity SegCounter is 
-port( clk      :in std_logic;
-      led_bit  :out std_logic;
-      dout     :out std_logic_vector(7 downto 0));
-end SegCounter ; 
+entity SegCounter is
+   port (
+      i_clk       : in std_logic;
 
+      i_digit_0   : in std_logic_vector(3 downto 0);
+      i_digit_1   : in std_logic_vector(3 downto 0);
+      i_digit_2   : in std_logic_vector(3 downto 0);
+      i_digit_3   : in std_logic_vector(3 downto 0);
+      i_digit_4   : in std_logic_vector(3 downto 0);
+      i_digit_5   : in std_logic_vector(3 downto 0);
+      i_digit_6   : in std_logic_vector(3 downto 0);
+      i_digit_7   : in std_logic_vector(3 downto 0);
+   
+      o_led7        : out std_logic_vector(7 downto 0);
+      o_led7s       : out std_logic_vector(7 downto 0)
+   );
+end SegCounter;
 
-architecture RTL of SegCounter is 
-   signal counter:std_logic_vector(27 downto 0); 
-   signal counter_en:std_logic; 
-   signal seg:std_logic_vector(3 downto 0); 
-begin 
-   led_bit<= '0' ;
+architecture RTL of SegCounter is
 
-   process(clk) 
-   begin 
-   if clk'event and clk='1'   then 
-      if counter>=x"37D783F"  then
-         counter_en<='1';
-         counter<=x"0000000"; 
-         else counter<=counter+'1'; 
-         counter_en<='0';
-         end if; 
-   end if; 
-   end process; 
-      
-   process(clk) 
-   begin 
-      if clk'event and clk='1' then 
-         if counter_en='1'   then  
-            if seg>=B"1010" then  
-               seg<=B"0000"; 
-            else 
-            seg<=seg+'1'; 
-            end if; 
-         end if; 
-      end if; 
-   end process; 
+   signal w_digit_sel : std_logic_vector(3 downto 0);
+   signal r_digit_idx : INTEGER range 0 to  7 := 0;
+	
+begin
 
+   P_SEL7SEG_STATE: process (i_clk)
+   begin
+      if rising_edge(i_clk) then
+         if r_digit_idx = 7 then
+            r_digit_idx <= 0;
+         else
+            r_digit_idx <= r_digit_idx + 1;
+         end if;
+      end if;
+   end process P_SEL7SEG_STATE;
+	
+	
+   -- select digit to display, enable w_digit_sel 7 segment display and select
+   -- input to display
+   P_SEL7SEG: process(r_digit_idx,i_digit_0,i_digit_1,i_digit_2,i_digit_3)
+   begin
+      w_digit_sel <= i_digit_0;  
+      o_led7 <= "00000000";
+     case r_digit_idx is
+       when 0 => 
+         o_led7 <= "01111111";
+         w_digit_sel <= i_digit_0;  
+       when 1 => 
+         o_led7 <= "10111111"; 
+         w_digit_sel <= i_digit_1;  
+       when 2 => 
+         o_led7 <= "11011111";
+         w_digit_sel <= i_digit_2;  
+       when 3 => 
+         o_led7 <= "11101111";
+         w_digit_sel <= i_digit_3;  
+       when 4 => 
+         o_led7 <= "11110111";
+         w_digit_sel <= i_digit_4;  
+       when 5 => 
+         o_led7 <= "11111011";
+         w_digit_sel <= i_digit_5;
+       when 6 => 
+         o_led7 <= "11111101";
+         w_digit_sel <= i_digit_6;  
+       when 7 => 
+         o_led7 <= "11111110";
+         w_digit_sel <= i_digit_7; 
+     end case;
+   end process P_SEL7SEG;
 
-   process(clk) 
-   begin 
-   if clk'event and clk='1'  then  
-      case seg is    --??????
-         when "0000" =>dout<="11000000"; --0 
-         when "0001" =>dout<="11111001"; --1 
-         when "0010" =>dout<="10100100"; --2 
-         when "0011" =>dout<="10110000"; --3 
-         when "0100" =>dout<="10011001"; --4 
-         when "0101" =>dout<="10010010"; --5 
-         when "0110" =>dout<="10000010"; --6 
-         when "0111" =>dout<="11111000"; --7 
-         when "1000" =>dout<="10000000"; --8 
-         when "1001" =>dout<="10010000"; --9 
-         when others=>null; 
-      end case; 
-   end if; 
-   end process; 
-end RTL; 
+   -- convert selected digit to 7 segment output
+   P_HEXTO7SEG : process (w_digit_sel)
+   begin
+      case w_digit_sel is
+         when X"0" => o_led7s <= "11000000";
+         when X"1" => o_led7s <= "11111001";
+         when X"2" => o_led7s <= "10100100";
+         when X"3" => o_led7s <= "10110000";
+         when X"4" => o_led7s <= "10011001";
+         when X"5" => o_led7s <= "10010010";
+         when X"6" => o_led7s <= "10000010";
+         when X"7" => o_led7s <= "11111000";
+         when X"8" => o_led7s <= "10000000";
+         when X"9" => o_led7s <= "10010000";
+         when X"A" => o_led7s <= "10001000";
+         when X"B" => o_led7s <= "10000011";
+         when X"C" => o_led7s <= "11000110";
+         when X"D" => o_led7s <= "10100001";
+         when X"E" => o_led7s <= "10000110";
+         when X"F" => o_led7s <= "10001110";
+         when others => null;
+      end case;
+   end process P_HEXTO7SEG;
+
+end RTL;
