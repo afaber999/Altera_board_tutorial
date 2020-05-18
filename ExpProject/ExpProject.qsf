@@ -37,7 +37,7 @@
 
 
 set_global_assignment -name FAMILY "Cyclone IV E"
-set_global_assignment -name DEVICE EP4CE6E22C8
+set_global_assignment -name DEVICE EP4CE10E22C8
 set_global_assignment -name TOP_LEVEL_ENTITY ExpProjectTop
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION "9.0 SP2"
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "19:56:15  APRIL 15, 2010"
@@ -72,8 +72,29 @@ set_location_assignment PIN_135 -to o_led7[4]
 set_location_assignment PIN_136 -to o_led7[5]
 set_location_assignment PIN_137 -to o_led7[6]
 set_location_assignment PIN_138 -to o_led7[7]
+set_location_assignment PIN_72 -to o_led[0]
+set_location_assignment PIN_73 -to o_led[1]
+set_location_assignment PIN_74 -to o_led[2]
+set_location_assignment PIN_80 -to o_led[3]
+set_location_assignment PIN_83 -to o_led[4]
+set_location_assignment PIN_84 -to o_led[5]
+set_location_assignment PIN_77 -to o_led[6]
+set_location_assignment PIN_76 -to o_led[7]
+set_location_assignment PIN_75 -to o_led[8]
+set_location_assignment PIN_71 -to o_led[9]
+set_location_assignment PIN_70 -to o_led[10]
+set_location_assignment PIN_69 -to o_led[11]
+set_location_assignment PIN_58 -to i_dipswitch[0]
+set_location_assignment PIN_59 -to i_dipswitch[1]
+set_location_assignment PIN_60 -to i_dipswitch[2]
+set_location_assignment PIN_64 -to i_dipswitch[3]
+set_location_assignment PIN_65 -to i_dipswitch[4]
+set_location_assignment PIN_66 -to i_dipswitch[5]
+set_location_assignment PIN_67 -to i_dipswitch[6]
+set_location_assignment PIN_68 -to i_dipswitch[7]
 set_global_assignment -name VHDL_FILE ExpProjectTop.vhd
 set_global_assignment -name VHDL_FILE SegCounter.vhd
+set_global_assignment -name VHDL_FILE SwitchDebouncer.vhd
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name LL_ROOT_REGION ON -section_id "Root Region"
@@ -81,5 +102,4 @@ set_global_assignment -name LL_MEMBER_STATE LOCKED -section_id "Root Region"
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
-set_global_assignment -name VHDL_FILE SwitchDebouncer.vhd
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

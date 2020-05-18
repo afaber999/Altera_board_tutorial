@@ -6,10 +6,14 @@ use ieee.numeric_std.all;
 entity ExpProjectTop is
    port (
       i_clk          : in std_logic;
+      i_push_button_4: in std_logic;
+      i_push_button_5: in std_logic;
+      i_dip_switch   : in std_logic;
+
+      i_dipswitch    : in std_logic_vector(7 downto 0);
       o_led7         : out std_logic_vector(7 downto 0);
       o_led7s        : out std_logic_vector(7 downto 0);
-      i_push_button_4: in std_logic;
-      i_push_button_5: in std_logic
+      o_led          : out std_logic_vector(11 downto 0)
    );
 end ExpProjectTop;
 
@@ -27,6 +31,8 @@ architecture RTL of ExpProjectTop is
    
 begin
 
+	o_led(7 downto 0) <= i_dipswitch(7 downto 0);
+	
   -- An instance of T15_Mux with architecture rtl
   INST_SEGCOUNTER  : entity work.SegCounter(rtl) port map(
         i_clk     => r_clk762Hz,
@@ -123,11 +129,17 @@ begin
    end process P2b;
 
 
+   -- handle push button events of tactile switch 4 & 5
    P_HANDLEPB : process (r_clk190Hz)
    begin
       if ( rising_edge(r_clk190Hz)) then
 
+         o_led(11 downto 8) <= (others => '1');
+
+
          if (r_push_button_4 = '1') then 
+            o_led(10) <= '0';
+            o_led( 8) <= '0';
 		      if r_bcounter = x"0000" then
 		         r_bcounter <= x"FFFF";
             else
@@ -136,7 +148,9 @@ begin
          end if;
 
          if (r_push_button_5 = '1') then 
-		      if r_bcounter = x"FFFF" then
+            o_led( 9) <= '0';
+            o_led(11) <= '0';
+            if r_bcounter = x"FFFF" then
 		         r_bcounter <= x"0000";
             else
 		         r_bcounter <= std_logic_vector( unsigned(r_bcounter) + 1 );
