@@ -4,7 +4,7 @@ JedecChain;
 	DefaultMfr(6E);
 
 	P ActionCode(Cfg)
-		Device PartName(EP4CE6E22) Path("C:/vhdl/altera/Altera_board_tutorial/SegCounter/") File("SegCounter.sof") MfrSpec(OpMask(1));
+		Device PartName(EP4CE6E22) Path("C:/vhdl/altera/Altera_board_tutorial/ExpProject/") File("ExpProject.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 
