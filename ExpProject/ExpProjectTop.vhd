@@ -32,13 +32,13 @@ architecture RTL of ExpProjectTop is
   signal r_clk762Hz       : std_logic := '0';
 
   signal r_acounter       : std_logic_vector(15 downto 0) := x"FFF0";
-  signal r_bcounter       : std_logic_vector(15 downto 0) := x"1111";
+  signal r_bcounter       : std_logic_vector(15 downto 0) := x"0001";
 
   signal r_push_button_4  : std_logic := '1';
   signal r_push_button_5  : std_logic := '1';
     
   signal r_TX_DV          : std_logic := '0';
-  signal r_TX_Byte        : std_logic_vector(7 downto 0) := x"41";
+  signal r_TX_Byte        : std_logic_vector(7 downto 0);
 
 begin
   o_led(7 downto 0) <= i_dipswitch(7 downto 0);
@@ -168,16 +168,22 @@ begin
     end if;
   end process P_HANDLEPB;
    
+  INST_ROM1 : entity work.sync_rom(RTL)
+    port map (
+      clk      => i_Clk,
+      address  => r_bcounter(7 downto 0),
+      data_out => r_TX_Byte
+    );
 
   INST_UARTTX : entity work.UART_TX(RTL)
     generic map ( g_CLKS_PER_BIT => c_CLKS_PER_BIT )
     port map (
-    i_Clk       => i_Clk,
-    i_TX_DV     => r_TX_DV,
-    i_TX_Byte   => r_TX_Byte,
-    o_TX_Active => open,
-    o_TX_Serial => o_txd,
-    o_TX_Done   => open
+      i_Clk       => i_Clk,
+      i_TX_DV     => r_TX_DV,
+      i_TX_Byte   => r_TX_Byte,
+      o_TX_Active => open,
+      o_TX_Serial => o_txd,
+      o_TX_Done   => open
     );
       
   P_SERTX : process (i_clk)
