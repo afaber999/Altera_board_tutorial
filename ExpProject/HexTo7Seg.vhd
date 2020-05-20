@@ -3,7 +3,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity SegCounter is
+entity HexTo7Seg is
   port (
     i_clk       : in std_logic;
 
@@ -19,9 +19,9 @@ entity SegCounter is
     o_led7      : out std_logic_vector(7 downto 0);
     o_led7s     : out std_logic_vector(7 downto 0)
   );
-end SegCounter;
+end HexTo7Seg;
 
-architecture RTL of SegCounter is
+architecture RTL of HexTo7Seg is
 
   signal w_digit_sel : std_logic_vector(3 downto 0);
   signal r_digit_idx : INTEGER range 0 to  7 := 0;

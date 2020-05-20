@@ -31,7 +31,8 @@ architecture RTL of ExpProjectTop is
   signal r_clk190Hz       : std_logic := '0';
   signal r_clk762Hz       : std_logic := '0';
 
-  signal r_acounter       : std_logic_vector(15 downto 0) := x"FFF0";
+  signal r_acounter       : std_logic_vector( 7 downto 0) := x"00";
+  signal r_adata          : std_logic_vector( 7 downto 0) := x"00";
   signal r_bcounter       : std_logic_vector(15 downto 0) := x"0001";
 
   signal r_push_button_4  : std_logic := '1';
@@ -44,10 +45,10 @@ begin
   o_led(7 downto 0) <= i_dipswitch(7 downto 0);
 	
   -- An instance of T15_Mux with architecture rtl
-  INST_SEGCOUNTER  : entity work.SegCounter(rtl) port map(
+  INST_HEXTO7SEG : entity work.HexTo7Seg(rtl) port map(
         i_clk     => r_clk762Hz,
-        i_digit_0 => r_acounter(15 downto 12),
-        i_digit_1 => r_acounter(11 downto  8),
+        i_digit_0 => r_adata( 7 downto  4),
+        i_digit_1 => r_adata( 3 downto  0),
         i_digit_2 => r_acounter( 7 downto  4),
         i_digit_3 => r_acounter( 3 downto  0),
         i_digit_4 => r_bcounter(15 downto 12),
@@ -129,7 +130,7 @@ begin
   P2b : process (r_clk1Hz)
   begin
     if rising_edge(r_clk1Hz) then
-      if r_acounter = x"FFFF" then
+      if r_acounter = x"0A" then
         r_acounter <= (others => '0');
       else
         r_acounter <= std_logic_vector( unsigned(r_acounter) + 1 );
@@ -167,12 +168,27 @@ begin
 
     end if;
   end process P_HANDLEPB;
-   
+
+  
   INST_ROM1 : entity work.sync_rom(RTL)
     port map (
       clk      => i_Clk,
       address  => r_bcounter(7 downto 0),
       data_out => r_TX_Byte
+    );
+
+  INST_RAM1 : entity work.sync_ram_prev_read(RTL)
+    generic map ( 
+      word_size => 8,
+      elements  => 256
+    )
+    port map (
+      clk            => i_Clk,
+      data_in        => r_TX_Byte,
+      write_address  => to_integer(signed(r_bcounter(7 downto 0))),
+      read_address   => to_integer(signed(r_acounter)),
+      we             => r_TX_DV,
+      data_out       => r_adata
     );
 
   INST_UARTTX : entity work.UART_TX(RTL)
